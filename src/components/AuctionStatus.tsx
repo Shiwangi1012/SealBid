@@ -8,8 +8,8 @@ import {
 import type { WalletState } from '../hooks/useWallet'
 
 // Deadlines from .env (Unix timestamps set during initialize)
-const BIDDING_DEADLINE = 1783680571
-const REVEAL_DEADLINE = 1783766971
+const BIDDING_DEADLINE = 1785938269
+const REVEAL_DEADLINE = 1785940069
 
 interface Props {
   wallet: WalletState

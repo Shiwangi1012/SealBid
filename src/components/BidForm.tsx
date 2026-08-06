@@ -63,10 +63,18 @@ export function BidForm({ wallet, onBidSubmitted }: Props) {
       if (err instanceof ContractError) {
         setErrorMsg(err.message)
       } else if (err instanceof Error) {
-        setErrorMsg(err.message)
+        const msg = err.message.toLowerCase()
+        if (msg.includes('user declined') || msg.includes('user rejected') || msg.includes('declined by user')) {
+          setErrorMsg('Transaction was rejected in your wallet.')
+        } else if (msg.includes('insufficient') || msg.includes('underfunded')) {
+          setErrorMsg('Insufficient XLM balance to cover the deposit and transaction fees.')
+        } else {
+          setErrorMsg(err.message || 'Unknown error — check the browser console for details.')
+        }
       } else {
-        setErrorMsg('Unknown error')
+        setErrorMsg('Unknown error — check the browser console for details.')
       }
+      console.error('[BidForm] submit error:', err)
     }
   }
 
@@ -132,19 +140,27 @@ export function BidForm({ wallet, onBidSubmitted }: Props) {
         </div>
       )}
       {status === 'success' && (
-        <div className="status-box status-success" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
-          <div>
-            ✅ Bid committed on-chain!{' '}
-            <a
-              href={`https://stellar.expert/explorer/testnet/tx/${txHash}`}
-              target="_blank"
-              rel="noreferrer"
-              style={{ color: 'var(--success)' }}
-            >
-              View tx ↗
-            </a>
+        <div className="status-box status-success" style={{ flexDirection: 'column', alignItems: 'stretch', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1rem', fontWeight: 600 }}>
+            ✅ transaction successfull
           </div>
-          <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
+          <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', wordBreak: 'break-all' }}>
+            Tx: <span style={{ fontFamily: 'monospace' }}>{txHash}</span>
+          </div>
+          <a
+            href={`https://stellar.expert/explorer/testnet/tx/${txHash}`}
+            target="_blank"
+            rel="noreferrer"
+            style={{ textDecoration: 'none' }}
+          >
+            <button
+              className="btn-secondary"
+              style={{ width: '100%', padding: '10px 16px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+            >
+              🔗 View on Stellar Expert (Testnet) ↗
+            </button>
+          </a>
+          <div style={{ display: 'flex', gap: '12px' }}>
             <button 
               className="btn-primary" 
               style={{ flex: 1, padding: '8px 16px', fontSize: '0.9rem' }}
@@ -163,8 +179,15 @@ export function BidForm({ wallet, onBidSubmitted }: Props) {
         </div>
       )}
       {status === 'error' && (
-        <div className="status-box status-error">
-          ❌ {errorMsg}
+        <div className="status-box status-error" style={{ flexDirection: 'column', alignItems: 'stretch', gap: '10px' }}>
+          <div>❌ {errorMsg}</div>
+          <button
+            className="btn-secondary"
+            style={{ width: '100%', padding: '8px 16px', fontSize: '0.9rem' }}
+            onClick={() => { setStatus('idle'); setErrorMsg('') }}
+          >
+            ↩ Try Again
+          </button>
         </div>
       )}
     </div>

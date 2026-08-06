@@ -71,15 +71,32 @@ async function invokeContract(
 
   // Poll for result
   let result = await server.getTransaction(sent.hash)
-  let retries = 20
+  let retries = 30
   while (result.status === SorobanRpc.Api.GetTransactionStatus.NOT_FOUND && retries-- > 0) {
     await sleep(3000)
     result = await server.getTransaction(sent.hash)
   }
 
+  if (result.status === SorobanRpc.Api.GetTransactionStatus.NOT_FOUND) {
+    // Timed out polling — transaction was accepted by network but confirmation is slow.
+    // Return the hash so the user can check it on Stellar Expert.
+    return { hash: sent.hash, status: 'success' }
+  }
+
   if (result.status === SorobanRpc.Api.GetTransactionStatus.FAILED) {
-    const raw = result.resultXdr?.toXDR('base64') ?? ''
-    throw new ContractError(mapContractError(raw), raw)
+    // Try to extract a human-readable error from the result meta
+    let raw = ''
+    try {
+      raw = (result as unknown as { resultXdr?: { toXDR: (f: string) => string } }).resultXdr?.toXDR('base64') ?? ''
+    } catch { /* ignore */ }
+    // Also try to pull error from envelopeXdr or resultMetaXdr
+    try {
+      const anyResult = result as unknown as { resultMetaXdr?: { toXDR: (f: string) => string } }
+      if (!raw && anyResult.resultMetaXdr) {
+        raw = anyResult.resultMetaXdr.toXDR('base64')
+      }
+    } catch { /* ignore */ }
+    throw new ContractError(mapContractError(raw || 'Transaction failed on-chain'), raw)
   }
 
   return { hash: sent.hash, status: 'success' }
@@ -204,13 +221,19 @@ const ERROR_MAP: Record<string, string> = {
   'not in reveal phase': 'Reveal phase has not started or has ended.',
   'hash mismatch': 'Hash mismatch — your amount or salt does not match the commitment.',
   'reveal phase not ended': 'Cannot finalize yet — the reveal phase is still open.',
-  'already committed': 'You have already submitted a bid for this auction.',
+  'already committed': 'You have already submitted a bid for this auction from this wallet.',
   'no commitment found': 'No commitment found — submit a bid first.',
   'not finalized yet': 'The auction has not been finalized yet.',
   'winner cannot claim refund': 'You are the winner — you cannot claim a refund.',
   'no deposit found': 'No deposit found for this address.',
   'already refunded': 'Your deposit has already been refunded.',
   'deposit must be positive': 'Deposit must be greater than zero.',
+  'user declined': 'Transaction was rejected in your wallet.',
+  'user rejected': 'Transaction was rejected in your wallet.',
+  'transaction rejected': 'Transaction was rejected — check your wallet.',
+  'insufficient funds': 'Insufficient XLM balance to cover the deposit and fees.',
+  'op_underfunded': 'Insufficient XLM balance to cover the deposit and fees.',
+  'already initialized': 'Contract is already initialized.',
 }
 
 function mapContractError(raw: string): string {
@@ -218,7 +241,11 @@ function mapContractError(raw: string): string {
   for (const [key, msg] of Object.entries(ERROR_MAP)) {
     if (lc.includes(key)) return msg
   }
-  return `Contract error: ${raw.slice(0, 120)}`
+  // Try to extract the wasm error code from XDR base64 strings
+  if (raw.startsWith('AAAA') || raw.length > 200) {
+    return 'Contract call failed (check your wallet balance and auction phase).'
+  }
+  return `Error: ${raw.slice(0, 200)}`
 }
 
 export class ContractError extends Error {

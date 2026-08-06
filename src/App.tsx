@@ -22,6 +22,16 @@ export default function App() {
 
   const isLandingPage = location.pathname === '/'
 
+  // Landing page renders completely outside the app shell
+  if (isLandingPage) {
+    return (
+      <Routes>
+        <Route path="/" element={<LandingPage wallet={wallet} />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    )
+  }
+
   return (
     <>
       {/* ---- Header ---- */}
@@ -48,29 +58,27 @@ export default function App() {
         </div>
       )}
 
-      {/* ---- Always-visible status (except on landing page) ---- */}
-      {!isLandingPage && <AuctionStatus wallet={wallet} onStateChange={setPhase} />}
+      {/* ---- Always-visible status ---- */}
+      <AuctionStatus wallet={wallet} onStateChange={setPhase} />
 
-      {/* ---- Navigation (except on landing page) ---- */}
-      {!isLandingPage && (
-        <nav className="nav-links">
-          <NavLink to="/bidding" className={({ isActive }) => (isActive ? 'active' : '')}>
-            Bid
-          </NavLink>
-          <NavLink to="/reveal" className={({ isActive }) => (isActive ? 'active' : '')}>
-            Reveal
-          </NavLink>
-          <NavLink to="/feed" className={({ isActive }) => (isActive ? 'active' : '')}>
-            Live Feed
-          </NavLink>
-        </nav>
-      )}
+      {/* ---- Navigation ---- */}
+      <nav className="nav-links">
+        <NavLink to="/bidding" className={({ isActive }) => (isActive ? 'active' : '')}>
+          Bid
+        </NavLink>
+        <NavLink to="/reveal" className={({ isActive }) => (isActive ? 'active' : '')}>
+          Reveal
+        </NavLink>
+        <NavLink to="/feed" className={({ isActive }) => (isActive ? 'active' : '')}>
+          Live Feed
+        </NavLink>
+      </nav>
 
       {/* ---- Main Content Area ---- */}
       <main className="page-transition" key={location.pathname}>
         <Routes>
           <Route path="/" element={<LandingPage wallet={wallet} />} />
-          
+
           <Route path="/bidding" element={
             !wallet.isConnected ? (
               <Navigate to="/" replace />
@@ -82,7 +90,7 @@ export default function App() {
               </div>
             )
           } />
-          
+
           <Route path="/reveal" element={
             !wallet.isConnected ? (
               <Navigate to="/" replace />
