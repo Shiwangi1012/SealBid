@@ -37,7 +37,7 @@
 - [x] Multi-wallet app — Freighter, xBull, Albedo, Ledger, WalletConnect via `StellarWalletsKit` — ![Wallet options](docs/screenshots/wallet-options.png)
 - [x] Deployed contract address — `CCDTXP7TMGEEMGUQT3FCWYW4YOTENQVCIMAI3Z4QAPM4BGUGDGMRWDCB`
 - [x] Transaction hash of a contract call — verifiable on [Stellar Expert](https://stellar.expert/explorer/testnet)
-- [x] Live demo link — [https://your-deployment-url.vercel.app](https://your-deployment-url.vercel.app)
+- [x] Live demo link — [https://bid-auction-snowy.vercel.app/](https://bid-auction-snowy.vercel.app/)
 
 ### Level 3
 
@@ -47,7 +47,7 @@
 - [x] Mobile-responsive frontend — mobile-first CSS, responsive countdown timer, scrollable reveal feed — ![Mobile UI](docs/screenshots/mobile-ui.png)
 - [x] Error handling and loading states — `ContractError` class with typed error map; pending/success/error states on all forms
 - [x] Production-ready architecture — re-entrancy guard on `claim_refund`; commitment scheme matches contract exactly; salt stored in localStorage for reveal
-- [x] Live demo link — [https://your-deployment-url.vercel.app](https://your-deployment-url.vercel.app)
+- [x] Live demo link — [https://bid-auction-snowy.vercel.app/](https://bid-auction-snowy.vercel.app/)
 - [x] Demo video (1–2 minutes) — [YouTube demo](https://youtu.be/YOUR_VIDEO_ID)
 
 ---
