@@ -30,7 +30,7 @@ jobs:
           workspaces: contracts -> target
 
       - name: Install Stellar CLI
-        run: cargo install --locked stellar-cli --version 22.0.0
+        uses: stellar/stellar-cli@v22.0.0
 
       - name: Lint
         working-directory: contracts
@@ -177,7 +177,7 @@ jobs:
 
       - name: Install Stellar CLI
         if: steps.deploy_config.outputs.enabled == 'true'
-        run: cargo install --locked stellar-cli --version 22.0.0
+        uses: stellar/stellar-cli@v22.0.0
 
       - name: Download WASM
         if: steps.deploy_config.outputs.enabled == 'true'
