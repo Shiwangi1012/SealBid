@@ -22,7 +22,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
-          targets: wasm32-unknown-unknown
+          targets: wasm32v1-none
 
       - name: Cache cargo
         uses: Swatinem/rust-cache@v2
@@ -46,24 +46,24 @@ jobs:
 
       - name: Build WASM (auction)
         working-directory: contracts
-        run: cargo build --target wasm32-unknown-unknown --release -p auction
+        run: cargo build --targets wasm32v1-none --release -p auction
 
       - name: Build WASM (vault)
         working-directory: contracts
-        run: cargo build --target wasm32-unknown-unknown --release -p vault
+        run: cargo build --target wasm32v1-none --release -p vault
 
       - name: Build WASM (refund)
         working-directory: contracts
-        run: cargo build --target wasm32-unknown-unknown --release -p refund
+        run: cargo build --target wasm32v1-none --release -p refund
 
       - name: Upload WASM artifacts
         uses: actions/upload-artifact@v4
         with:
           name: wasm
           path: |
-            contracts/target/wasm32-unknown-unknown/release/auction.wasm
-            contracts/target/wasm32-unknown-unknown/release/vault.wasm
-            contracts/target/wasm32-unknown-unknown/release/refund.wasm
+            contracts/target/wasm32v1-none/release/auction.wasm
+            contracts/target/wasm32v1-none/release/vault.wasm
+            contracts/target/wasm32v1-none/release/refund.wasm
 
   frontend:
     name: React frontend
@@ -173,7 +173,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
-          targets: wasm32-unknown-unknown
+          targets: wasm32v1-none
 
       - name: Install Stellar CLI
         if: steps.deploy_config.outputs.enabled == 'true'
