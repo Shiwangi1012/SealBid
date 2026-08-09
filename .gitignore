@@ -1,2 +1,10 @@
 .vercel
-node_modules
+node_modules/
+
+# Rust / Soroban build files
+target/
+**/target/
+
+# Environment files
+.env
+.env.*
