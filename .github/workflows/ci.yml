@@ -22,7 +22,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
-          targets: wasm32v1-none
+          target: wasm32v1-none
 
       - name: Cache cargo
         uses: Swatinem/rust-cache@v2
@@ -34,7 +34,7 @@ jobs:
 
       - name: Lint
         working-directory: contracts
-        run: cargo clippy --workspace --all-targets -- -D warnings
+        run: cargo clippy --workspace --all-target -- -D warnings
 
       - name: Format check
         working-directory: contracts
@@ -46,7 +46,7 @@ jobs:
 
       - name: Build WASM (auction)
         working-directory: contracts
-        run: cargo build --targets wasm32v1-none --release -p auction
+        run: cargo build --target wasm32v1-none --release -p auction
 
       - name: Build WASM (vault)
         working-directory: contracts
@@ -173,7 +173,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
-          targets: wasm32v1-none
+          target: wasm32v1-none
 
       - name: Install Stellar CLI
         if: steps.deploy_config.outputs.enabled == 'true'
