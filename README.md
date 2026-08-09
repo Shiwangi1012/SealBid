@@ -6,7 +6,7 @@
 | Item | Value |
 |---|---|
 | Live demo | [https://bid-auction-snowy.vercel.app/](https://bid-auction-snowy.vercel.app/) |
-| Demo video | [YouTube demo](https://youtu.be/YOUR_VIDEO_ID) |
+| Demo video | [demo.mp4](demo.mp4) |
 | Network | Stellar Testnet (Test SDF Network ; September 2015) |
 | AuctionContract | [`CCDTXP7TMGEEMGUQT3FCWYW4YOTENQVCIMAI3Z4QAPM4BGUGDGMRWDCB`](https://stellar.expert/explorer/testnet/contract/CCDTXP7TMGEEMGUQT3FCWYW4YOTENQVCIMAI3Z4QAPM4BGUGDGMRWDCB) |
 | TimeLockVaultContract | [`CDZOINVUO7QY4V2VUA755Y4WFRLAAVJBNJH7XZIKF3DKOHIXHYEN5KAK`](https://stellar.expert/explorer/testnet/contract/CDZOINVUO7QY4V2VUA755Y4WFRLAAVJBNJH7XZIKF3DKOHIXHYEN5KAK) |
@@ -51,7 +51,7 @@
 - [x] Error handling and loading states — `ContractError` class with typed error map; pending/success/error states on all forms
 - [x] Production-ready architecture — re-entrancy guard on `claim_refund`; commitment scheme matches contract exactly; salt stored in localStorage for reveal
 - [x] Live demo link — [https://bid-auction-snowy.vercel.app/](https://bid-auction-snowy.vercel.app/)
-- [x] Demo video (1–2 minutes) — [YouTube demo](https://youtu.be/YOUR_VIDEO_ID)
+- [x] Demo video (1–2 minutes) — [demo.mp4](demo.mp4)
 
 ---
 
@@ -248,20 +248,6 @@ All screenshots referenced in the submission checklist should be placed in `docs
 | Transaction result | `tx-result.png` | Tx hash with Stellar Expert link shown to user |
 | Wallet options | `wallet-options.png` | Multi-wallet modal (Freighter, xBull, Albedo, etc.) |
 | Mobile responsive UI | `mobile-ui.png` | Mobile view of dashboard / countdown |
-
-## Demo video
-
-Watch the full walkthrough here:
-
-**[▶ YouTube demo](https://youtu.be/YOUR_VIDEO_ID)**
-
-<!-- Replace the link above with your actual YouTube URL after recording -->
-
-The demo covers:
-1. Connecting wallet via multi-wallet modal
-2. Submitting a sealed bid (commit phase)
-3. Revealing the bid after the deadline
-4. Finalizing the auction and claiming a refund
 
 ---
 
