@@ -142,7 +142,7 @@ export function BidForm({ wallet, onBidSubmitted }: Props) {
       {status === 'success' && (
         <div className="status-box status-success" style={{ flexDirection: 'column', alignItems: 'stretch', gap: '12px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1rem', fontWeight: 600 }}>
-            ✅ transaction successfull
+            ✅ Transaction successful
           </div>
           <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', wordBreak: 'break-all' }}>
             Tx: <span style={{ fontFamily: 'monospace' }}>{txHash}</span>

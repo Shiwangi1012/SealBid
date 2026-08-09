@@ -43,8 +43,11 @@
 
 - [x] Advanced smart contract development — three-contract design: `AuctionContract` + `TimeLockVaultContract` + `RefundDistributorContract`; full phase state machine (Bidding → Reveal → Finalized)
 - [x] Inter-contract communication — `AuctionContract` calls `TimeLockVaultContract.release` and `RefundDistributorContract.batch_refund` post-finalize
+- [x] CI/CD pipeline - `.github/workflows/ci.yml` (runs `cargo test` for Soroban contracts)
 - [x] Event streaming and real-time updates — `useAuctionEvents` hook polls Soroban RPC for `reveal` events every 8 seconds; live feed component
 - [x] Mobile-responsive frontend — mobile-first CSS, responsive countdown timer, scrollable reveal feed — ![Mobile UI](docs/screenshots/mobile-ui.png)
+- [x] CI/CD pipeline running - ![CI pipeline](docs/screenshots/ci-pipeline.png)
+- [x] Test output with 3+ passing tests - ![Test output](docs/screenshots/tests.png)
 - [x] Error handling and loading states — `ContractError` class with typed error map; pending/success/error states on all forms
 - [x] Production-ready architecture — re-entrancy guard on `claim_refund`; commitment scheme matches contract exactly; salt stored in localStorage for reveal
 - [x] Live demo link — [https://bid-auction-snowy.vercel.app/](https://bid-auction-snowy.vercel.app/)
@@ -145,7 +148,7 @@ The Connect button uses `StellarWalletsKit` with `allowAllModules()` to support 
 
 ### Prerequisites
 
-- Rust with `wasm32-unknown-unknown` target (`rustup target add wasm32-unknown-unknown`)
+- Rust with `wasm32v1-none` target (`rustup target add wasm32v1-none`)
 - Stellar CLI 27+ (`stellar --version`)
 - Node.js 20+ and npm 10+
 
@@ -153,10 +156,10 @@ The Connect button uses `StellarWalletsKit` with `allowAllModules()` to support 
 
 ```bash
 cd contracts
-cargo build --target wasm32-unknown-unknown --release
+cargo build --target wasm32v1-none --release
 ```
 
-Wasm artifacts land in `contracts/target/wasm32-unknown-unknown/release/`.
+Wasm artifacts land in `contracts/target/wasm32v1-none/release/`.
 
 ### Deploy contracts (optional — already deployed on testnet)
 
@@ -165,9 +168,9 @@ Wasm artifacts land in `contracts/target/wasm32-unknown-unknown/release/`.
 stellar keys fund deployer --network testnet
 
 # Deploy
-stellar contract deploy --wasm contracts/target/wasm32-unknown-unknown/release/auction.wasm --source deployer --network testnet
-stellar contract deploy --wasm contracts/target/wasm32-unknown-unknown/release/vault.wasm   --source deployer --network testnet
-stellar contract deploy --wasm contracts/target/wasm32-unknown-unknown/release/refund.wasm  --source deployer --network testnet
+stellar contract deploy --wasm contracts/target/wasm32v1-none/release/auction.wasm --source deployer --network testnet
+stellar contract deploy --wasm contracts/target/wasm32v1-none/release/vault.wasm   --source deployer --network testnet
+stellar contract deploy --wasm contracts/target/wasm32v1-none/release/refund.wasm  --source deployer --network testnet
 ```
 
 ### Run the frontend locally
