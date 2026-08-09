@@ -273,7 +273,7 @@ impl AuctionContract {
         } else if now < reveal_deadline {
             Phase::Reveal
         } else {
-            Phase::Reveal
+            Phase::Finalized
         }
     }
 
