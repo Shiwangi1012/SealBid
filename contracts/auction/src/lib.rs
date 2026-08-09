@@ -1,7 +1,7 @@
 #![no_std]
 
 use soroban_sdk::{
-     contract, contractimpl, contracttype, symbol_short, token, Address, Bytes, BytesN, Env, Vec,
+    contract, contractimpl, contracttype, symbol_short, token, Address, Bytes, BytesN, Env, Vec,
 };
 
 // ---------------------------------------------------------------------------
@@ -61,11 +61,19 @@ impl AuctionContract {
         }
         admin.require_auth();
         env.storage().instance().set(&DataKey::Admin, &admin);
-        env.storage().instance().set(&DataKey::NativeToken, &native_token);
-        env.storage().instance().set(&DataKey::BiddingDeadline, &bidding_deadline);
-        env.storage().instance().set(&DataKey::RevealDeadline, &reveal_deadline);
+        env.storage()
+            .instance()
+            .set(&DataKey::NativeToken, &native_token);
+        env.storage()
+            .instance()
+            .set(&DataKey::BiddingDeadline, &bidding_deadline);
+        env.storage()
+            .instance()
+            .set(&DataKey::RevealDeadline, &reveal_deadline);
         env.storage().instance().set(&DataKey::Finalized, &false);
-        env.storage().instance().set(&DataKey::Bidders, &Vec::<Address>::new(&env));
+        env.storage()
+            .instance()
+            .set(&DataKey::Bidders, &Vec::<Address>::new(&env));
     }
 
     // -----------------------------------------------------------------------
@@ -73,7 +81,7 @@ impl AuctionContract {
     // commitment = sha256( amount_u64_le_bytes ++ salt_bytes_32 )
     // -----------------------------------------------------------------------
 
-     pub fn commit(env: Env, bidder: Address, commitment: BytesN<32>, deposit: i128) {
+    pub fn commit(env: Env, bidder: Address, commitment: BytesN<32>, deposit: i128) {
         bidder.require_auth();
         Self::assert_phase(&env, Phase::Bidding);
 
@@ -81,8 +89,9 @@ impl AuctionContract {
         if env
             .storage()
             .persistent()
-            .has(&DataKey::Commitment(bidder.clone())){
-                panic!("already committed");
+            .has(&DataKey::Commitment(bidder.clone()))
+        {
+            panic!("already committed");
         }
 
         if deposit <= 0 {
@@ -94,8 +103,12 @@ impl AuctionContract {
         let token_client = token::Client::new(&env, &native_token);
         token_client.transfer(&bidder, &env.current_contract_address(), &deposit);
 
-        env.storage().persistent().set(&DataKey::Commitment(bidder.clone()), &commitment);
-        env.storage().persistent().set(&DataKey::Deposit(bidder.clone()), &deposit);
+        env.storage()
+            .persistent()
+            .set(&DataKey::Commitment(bidder.clone()), &commitment);
+        env.storage()
+            .persistent()
+            .set(&DataKey::Deposit(bidder.clone()), &deposit);
 
         // Track bidder list
         let mut bidders: Vec<Address> = env.storage().instance().get(&DataKey::Bidders).unwrap();
@@ -129,10 +142,8 @@ impl AuctionContract {
             .persistent()
             .set(&DataKey::RevealedAmount(bidder.clone()), &amount);
 
-        env.events().publish(
-            (symbol_short!("reveal"), bidder.clone()),
-            amount,
-        );
+        env.events()
+            .publish((symbol_short!("reveal"), bidder.clone()), amount);
     }
 
     // -----------------------------------------------------------------------
@@ -140,7 +151,11 @@ impl AuctionContract {
     // -----------------------------------------------------------------------
 
     pub fn finalize(env: Env) {
-        let reveal_deadline: u64 = env.storage().instance().get(&DataKey::RevealDeadline).unwrap();
+        let reveal_deadline: u64 = env
+            .storage()
+            .instance()
+            .get(&DataKey::RevealDeadline)
+            .unwrap();
         if env.ledger().timestamp() < reveal_deadline {
             panic!("reveal phase not ended");
         }
@@ -173,10 +188,7 @@ impl AuctionContract {
         }
         env.storage().instance().set(&DataKey::Finalized, &true);
 
-        env.events().publish(
-            (symbol_short!("finalize"),),
-            highest,
-        );
+        env.events().publish((symbol_short!("finalize"),), highest);
     }
 
     // -----------------------------------------------------------------------
@@ -228,13 +240,21 @@ impl AuctionContract {
             .storage()
             .instance()
             .get(&DataKey::Finalized)
-            .unwrap_or(false);        
+            .unwrap_or(false);
         if finalized {
             return Phase::Finalized;
         }
         let now = env.ledger().timestamp();
-        let bidding_deadline: u64 = env.storage().instance().get(&DataKey::BiddingDeadline).unwrap();
-        let reveal_deadline: u64 = env.storage().instance().get(&DataKey::RevealDeadline).unwrap();
+        let bidding_deadline: u64 = env
+            .storage()
+            .instance()
+            .get(&DataKey::BiddingDeadline)
+            .unwrap();
+        let reveal_deadline: u64 = env
+            .storage()
+            .instance()
+            .get(&DataKey::RevealDeadline)
+            .unwrap();
 
         if now < bidding_deadline {
             Phase::Bidding
@@ -259,7 +279,11 @@ impl AuctionContract {
     // -----------------------------------------------------------------------
 
     fn current_phase(env: &Env) -> Phase {
-        let finalized: bool = env.storage().instance().get(&DataKey::Finalized).unwrap_or(false);
+        let finalized: bool = env
+            .storage()
+            .instance()
+            .get(&DataKey::Finalized)
+            .unwrap_or(false);
         if finalized {
             return Phase::Finalized;
         }
