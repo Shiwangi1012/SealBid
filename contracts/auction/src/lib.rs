@@ -1,10 +1,7 @@
 #![no_std]
 
 use soroban_sdk::{
-    contract, contractimpl, contracttype,
-    symbol_short,
-    Address, Bytes, BytesN, Env, Vec,
-    token,
+     contract, contractimpl, contracttype, symbol_short, token, Address, Bytes, BytesN, Env, Vec,
 };
 
 // ---------------------------------------------------------------------------
@@ -76,18 +73,16 @@ impl AuctionContract {
     // commitment = sha256( amount_u64_le_bytes ++ salt_bytes_32 )
     // -----------------------------------------------------------------------
 
-    pub fn commit(
-        env: Env,
-        bidder: Address,
-        commitment: BytesN<32>,
-        deposit: i128,
-    ) {
+     pub fn commit(env: Env, bidder: Address, commitment: BytesN<32>, deposit: i128) {
         bidder.require_auth();
         Self::assert_phase(&env, Phase::Bidding);
 
         // Must not have committed already
-        if env.storage().persistent().has(&DataKey::Commitment(bidder.clone())) {
-            panic!("already committed");
+        if env
+            .storage()
+            .persistent()
+            .has(&DataKey::Commitment(bidder.clone())){
+                panic!("already committed");
         }
 
         if deposit <= 0 {
@@ -229,7 +224,11 @@ impl AuctionContract {
     // -----------------------------------------------------------------------
 
     pub fn get_state(env: Env) -> Phase {
-        let finalized: bool = env.storage().instance().get(&DataKey::Finalized).unwrap_or(false);
+        let finalized: bool = env
+            .storage()
+            .instance()
+            .get(&DataKey::Finalized)
+            .unwrap_or(false);        
         if finalized {
             return Phase::Finalized;
         }
@@ -265,8 +264,16 @@ impl AuctionContract {
             return Phase::Finalized;
         }
         let now = env.ledger().timestamp();
-        let bidding_deadline: u64 = env.storage().instance().get(&DataKey::BiddingDeadline).unwrap();
-        let reveal_deadline: u64 = env.storage().instance().get(&DataKey::RevealDeadline).unwrap();
+        let bidding_deadline: u64 = env
+            .storage()
+            .instance()
+            .get(&DataKey::BiddingDeadline)
+            .unwrap();
+        let reveal_deadline: u64 = env
+            .storage()
+            .instance()
+            .get(&DataKey::RevealDeadline)
+            .unwrap();
 
         if now < bidding_deadline {
             Phase::Bidding
@@ -282,7 +289,7 @@ impl AuctionContract {
         if actual != expected {
             match expected {
                 Phase::Bidding => panic!("not in bidding phase"),
-                Phase::Reveal  => panic!("not in reveal phase"),
+                Phase::Reveal => panic!("not in reveal phase"),
                 Phase::Finalized => panic!("not finalized"),
             }
         }
